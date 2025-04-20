@@ -1,8 +1,9 @@
-name: Run Parser Every 5 Minute_1
+name: Run Parser Every 1 Hour
 
 on:
   schedule:
-    - cron: '*/5 * * * *' #каждые 5 минут
+    - cron: '0 * * * *' #каждый час
+    #- cron: '*/5 * * * *' #каждые 5 минут
     #- cron: '0,30 6-23 * * *'  # Каждые полчаса с 9:00 до 00:00 по МСК (UTC+3)
     #- cron: '0,15,30,45 6-21 * * *'  # каждые 15 минут с 9:00 до 00:00 по МСК, учитывая -3 от МСК
   #workflow_dispatch:
