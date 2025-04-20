@@ -9,6 +9,8 @@ on:
 jobs:
   run-parser:
     runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Moscow
 
     steps:
       - name: Checkout repo
@@ -30,3 +32,4 @@ jobs:
         with:
           name: events-json
           path: events.json
+
