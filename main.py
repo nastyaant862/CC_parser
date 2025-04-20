@@ -24,10 +24,13 @@ FILENAME = "events.json"
 
 
 def load_previous_events():
-    if os.path.exists(FILENAME):
-        with open(FILENAME, "r", encoding="utf-8") as f:
+    if not os.path.exists("events.json") or os.stat("events.json").st_size == 0:
+        return []
+    with open("events.json", "r", encoding="utf-8") as f:
+        try:
             return json.load(f)
-    return []
+        except json.JSONDecodeError:
+            return []
 
 
 def save_current_events(events):
