@@ -1,2 +1,4 @@
-requests
-beautifulsoup4
+requests~=2.31.0
+beautifulsoup4~=4.12.3
+pytz~=2023.3.post1
+bs4~=0.0.2
