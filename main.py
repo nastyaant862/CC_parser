@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import datetime
 import json
 import os
-import pytz
 
 
 def send_telegram_channel(message):
@@ -46,13 +45,8 @@ def event_key(event):
 # === Парсинг ===
 
 url = "https://comedyconcert.ru"
-
-# Задаём временную зону МСК
-moscow_tz = pytz.timezone('Europe/Moscow')
-# Получаем текущее время в МСК
-now_msk = datetime.datetime.now(moscow_tz)
-
-message = f"Проверка началась в {now_msk.strftime('%H:%M')} - {now_msk.strftime('%d.%m.%Y')}"
+dt = datetime.datetime.now() + datetime.timedelta(hours=3)
+message = 'Проверка в {0:%H:%M} — {0:%d.%m.%Y}\n\n'.format(dt)
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
