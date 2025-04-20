@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import datetime
 import json
 import os
+import pytz
 
 
 def send_telegram_channel(message):
@@ -45,7 +46,10 @@ def event_key(event):
 # === Парсинг ===
 
 url = "https://comedyconcert.ru"
-dt = datetime.datetime.now() + datetime.timedelta(hours=3)
+
+moscow_tz = pytz.timezone('Europe/Moscow')
+now_utc = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+dt = now_utc.astimezone(moscow_tz)
 message = 'Проверка в {0:%H:%M} — {0:%d.%m.%Y}\n\n'.format(dt)
 
 headers = {
