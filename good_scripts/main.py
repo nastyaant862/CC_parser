@@ -91,7 +91,7 @@ for card in cards:
     except Exception as e:
         print("Ошибка при парсинге карточки:", e)
 
-# === Сравнение с предыдущими результатами ===
+# = Сравнение с предыдущими результатами =
 
 previous_events = load_previous_events()
 previous_keys = set(event_key(e) for e in previous_events)
