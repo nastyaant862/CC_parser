@@ -18,6 +18,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      - name: Check if JSON exists
+        run: |
+          if [ ! -f events.json ]; then
+            echo "Файл events.json не найден, создаём пустой..."
+            echo "[]" > events.json
+          fi
+
       - name: Download previous events
         uses: actions/download-artifact@v4
         with:

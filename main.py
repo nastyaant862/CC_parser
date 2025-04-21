@@ -120,7 +120,7 @@ if new_events:
     send_telegram_channel(message)
 
 else:
-    message += "ℹ️ Не найдено новых мероприятий.\n Найденные ранее:\n"
+    message += "ℹ️ Не найдено новых мероприятий.\n Найденные ранее:\n <blockquote>"
 
     for event in previous_events:
         message += (
@@ -129,7 +129,7 @@ else:
             f"🕒 {event['Дата и время']}\n"
             f"🔗 {event['Ссылка']}\n\n"
         )
-
+    message += '</blockquote>'
     send_telegram_channel(message)
 
 # Обновляем файл
