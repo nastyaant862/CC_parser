@@ -25,11 +25,11 @@ jobs:
             echo "[]" > events.json
           fi
 
-      - name: Download previous events
-        uses: actions/download-artifact@v4
-        with:
-          name: events-json
-          path: .
+#      - name: Download previous events
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: events-json
+#          path: .
 
       - name: Set up Python
         uses: actions/setup-python@v4
