@@ -117,7 +117,6 @@ if new_events:
             f"🔗 <a href=\"{event['Ссылка']}\">Перейти к событию</a>"
             '\n\n'
         )
-    send_telegram_channel(message)
 
 else:
     message += "ℹ️ Не найдено новых мероприятий.\n Найденные ранее:\n <blockquote>"
@@ -130,7 +129,8 @@ else:
             f"🔗 {event['Ссылка']}\n\n"
         )
     message += '</blockquote>'
-    send_telegram_channel(message)
 
-# Обновляем файл
+send_telegram_channel(message)
+
+#Обновляем файл
 save_current_events(events)
