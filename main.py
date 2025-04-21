@@ -6,6 +6,7 @@ import os
 import pytz
 
 FILENAME = "events.json"
+message = ''
 
 
 def send_telegram_channel(message):
@@ -46,10 +47,10 @@ def event_key(event):
 
 url = "https://comedyconcert.ru"
 
-moscow_tz = pytz.timezone('Europe/Moscow')
-now_utc = datetime.datetime.now(pytz.utc)
-dt = now_utc.astimezone(moscow_tz)
-message = 'Проверка в {0:%H:%M} — {0:%d.%m.%Y}\n\n'.format(dt)
+# moscow_tz = pytz.timezone('Europe/Moscow')
+# now_utc = datetime.datetime.now(pytz.utc)
+# dt = now_utc.astimezone(moscow_tz)
+# message = '{0:%H:%M} — {0:%d.%m.%Y}\n\n'.format(dt)
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -108,7 +109,7 @@ new_keys = current_keys - previous_keys
 new_events = [e for e in events if event_key(e) in new_keys]
 
 if new_events:
-    print(f"\n✨ Найдено новых мероприятий: {len(new_events)}")
+    message = f"Найдено {len(new_events)} мероприятий:\n"
     for event in new_events:
         message += (
             f"<b>🎭 {event['Название']}</b>\n"
