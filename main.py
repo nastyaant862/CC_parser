@@ -1,9 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
-import datetime
+#import datetime
 import json
 import os
-import pytz
+#import pytz
 
 FILENAME = "events.json"
 message = ''
@@ -43,6 +43,10 @@ def event_key(event):
     # Ключ, по которому можно сравнивать события
     return f"{event['Название']}|{event['Дата и время']}|{event['Ссылка']}"
 
+
+def sort_events_alphabetically(events):
+    return sorted(events, key=lambda e: e["Название"].lower())
+
 # === Парсинг ===
 
 url = "https://comedyconcert.ru"
@@ -65,7 +69,10 @@ if response.status_code == 302:
 response = requests.get(url, headers=headers)
 soup = BeautifulSoup(response.content, "html.parser")
 
-keywords = ["импров", "improv", "истории", "шоу из шоу", "шастун", "попов", "матвиенко", "позов"]
+keywords = ["импров", "improv", "истории", "шоу из шоу",
+            "шастун", "попов", "матвиенко", "позов",
+            "мысли вслух", "неигры", "отыдо", "мински",
+            "горох", "заяц", "зайца", "шевелев", "гаус"]
 cards = soup.find_all("div", class_="event__list__card")
 
 events = []
@@ -99,8 +106,10 @@ for card in cards:
     except Exception as e:
         print("Ошибка при парсинге карточки:", e)
 
-# = Сравнение с предыдущими результатами =
+# = Сортировка мероприятий по алфавиту
+events = sort_events_alphabetically(events)
 
+# = Сравнение с предыдущими результатами (не работает в Github Actions) =
 previous_events = load_previous_events()
 previous_keys = set(event_key(e) for e in previous_events)
 current_keys = set(event_key(e) for e in events)
