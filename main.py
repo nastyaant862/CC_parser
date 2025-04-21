@@ -5,6 +5,8 @@ import json
 import os
 import pytz
 
+FILENAME = "events.json"
+
 
 def send_telegram_channel(message):
     token = '6618174909:AAGdvPe3cC9vORvalMEh5-LiRewmDeGpabE'
@@ -19,9 +21,6 @@ def send_telegram_channel(message):
     response = requests.post(url, data=payload)
     if response.status_code != 200:
         print("❗️Ошибка отправки в канал:", response.text)
-
-
-FILENAME = "events.json"
 
 
 def load_previous_events():
@@ -48,7 +47,7 @@ def event_key(event):
 url = "https://comedyconcert.ru"
 
 moscow_tz = pytz.timezone('Europe/Moscow')
-now_utc = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+now_utc = datetime.datetime.now(datetime.UTC).replace(tzinfo=pytz.utc)
 dt = now_utc.astimezone(moscow_tz)
 message = 'Проверка в {0:%H:%M} — {0:%d.%m.%Y}\n\n'.format(dt)
 
@@ -70,6 +69,7 @@ cards = soup.find_all("div", class_="event__list__card")
 
 events = []
 
+# = Фильтрация карточек по ключевым словам
 for card in cards:
     try:
         title_tag = card.select_one("a.event__list__card__title")
@@ -120,7 +120,16 @@ if new_events:
     send_telegram_channel(message)
 
 else:
-    message += "ℹ️ Не найдено новых мероприятий."
+    message += "ℹ️ Не найдено новых мероприятий.\n Найденные ранее:\n"
+
+    for event in previous_events:
+        message += (
+            f"🎭 {event['Название']}\n"
+            f"📍 {event['Город']}\n"
+            f"🕒 {event['Дата и время']}\n"
+            f"🔗 {event['Ссылка']}\n\n"
+        )
+
     send_telegram_channel(message)
 
 # Обновляем файл

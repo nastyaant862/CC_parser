@@ -1,9 +1,9 @@
-name: Run Parser Every 1 Hour
+name: Run Parser Every 10 Min
 
 on:
   schedule:
-    - cron: '0 * * * *' #каждый час
-    #- cron: '*/5 * * * *' #каждые 5 минут
+    #- cron: '0 * * * *' #каждый час
+    - cron: '*/10 * * * *' #каждые 10 минут
     #- cron: '0,30 6-23 * * *'  # Каждые полчаса с 9:00 до 00:00 по МСК (UTC+3)
     #- cron: '0,15,30,45 6-21 * * *'  # каждые 15 минут с 9:00 до 00:00 по МСК, учитывая -3 от МСК
   #workflow_dispatch:
@@ -17,6 +17,12 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
+      - name: Download previous events
+        uses: actions/download-artifact@v4
+        with:
+          name: events-json
+          path: .
 
       - name: Set up Python
         uses: actions/setup-python@v4
