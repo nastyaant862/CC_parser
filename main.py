@@ -47,7 +47,7 @@ def event_key(event):
 url = "https://comedyconcert.ru"
 
 moscow_tz = pytz.timezone('Europe/Moscow')
-now_utc = datetime.datetime.now(datetime.UTC).replace(tzinfo=pytz.utc)
+now_utc = datetime.datetime.now(pytz.utc)
 dt = now_utc.astimezone(moscow_tz)
 message = 'Проверка в {0:%H:%M} — {0:%d.%m.%Y}\n\n'.format(dt)
 
