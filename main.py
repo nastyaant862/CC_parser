@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import json
 import os
 #import pytz
+import random
 
 FILENAME = "events.json"
 message = ''
@@ -47,6 +48,35 @@ def event_key(event):
 def sort_events_alphabetically(events):
     return sorted(events, key=lambda e: e["Название"].lower())
 
+
+def fetch_with_handling(url, headers):
+    try:
+        response = requests.get(url, headers=headers, allow_redirects=False)
+        if response.status_code == 302:
+            print("Произошел редирект, следуем по новому адресу:", response.headers["Location"])
+            url = response.headers["Location"]
+            response = requests.get(url, headers=headers)
+
+        if response.status_code == 403:
+            print("🚫 Доступ запрещён (403). Возможно, сайт распознал бота.")
+            send_telegram_channel("⚠️ Парсер получил код 403 (доступ запрещён). Проверь работу парсера.")
+            return None
+
+        if response.status_code == 429:
+            print("⏱ Слишком много запросов (429). Нужно уменьшить частоту.")
+            send_telegram_channel("⚠️ Парсер получил код 429 (слишком много запросов).")
+            return None
+
+        if not response.ok:
+            print(f"⚠️ Непредвиденный код ответа: {response.status_code}")
+            return None
+        return response
+    except Exception as e:
+        print(f"❗️Ошибка при запросе: {e}")
+        send_telegram_channel(f"❗️Произошла ошибка при выполнении запроса: {e}")
+        return None
+
+
 # === Парсинг ===
 
 url = "https://comedyconcert.ru"
@@ -55,18 +85,37 @@ url = "https://comedyconcert.ru"
 # now_utc = datetime.datetime.now(pytz.utc)
 # dt = now_utc.astimezone(moscow_tz)
 # message = '{0:%H:%M} — {0:%d.%m.%Y}\n\n'.format(dt)
+# headers = {
+#     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+# }
 
+user_agents = [
+    # Chrome Windows
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    # Chrome Mac
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+    # Firefox Windows
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
+    # Firefox Mac
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 12.5; rv:118.0) Gecko/20100101 Firefox/118.0",
+    # Safari iPhone
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+    # Edge Windows
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
+]
+
+# Выбираем случайный User-Agent
 headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    "User-Agent": random.choice(user_agents)
 }
+print("Используется User-Agent:", headers["User-Agent"])
+
 
 response = requests.get(url, headers=headers, allow_redirects=False)
+response = fetch_with_handling(url, headers)
+if response is None:
+    exit()
 
-if response.status_code == 302:
-    print("Произошел редирект, следуем по новому адресу:", response.headers["Location"])
-    url = response.headers["Location"]
-
-response = requests.get(url, headers=headers)
 soup = BeautifulSoup(response.content, "html.parser")
 
 keywords = ["импров", "improv", "истории", "шоу из шоу",
@@ -124,7 +173,7 @@ if new_events:
             f"<b>🎭 {event['Название']}</b>\n"
             f"📍 <b>{event['Город']}</b>\n"
             f"🕒 {event['Дата и время']}\n"
-            f"🔗 <a href=\"{event['Ссылка']}\">Перейти к событию</a>"
+            f"🔗 {event['Ссылка']}"
             '\n\n'
         )
 
