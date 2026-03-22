@@ -10,8 +10,8 @@ FILENAME = "events.json"
 message = ''
 
 def send_telegram_channel(message):
-    token = '6618174909:AAGdvPe3cC9vORvalMEh5-LiRewmDeGpabE'
-    chat_id = "-1002527661703"  # ID канала
+    token = ''
+    chat_id = "" 
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     payload = {
         "chat_id": chat_id,
